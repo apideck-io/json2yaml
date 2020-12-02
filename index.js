@@ -94,7 +94,11 @@
             throw new Error('what the crap: ' + typeOf(val));
           }
 
-          output += '\n' + indentLevel + `"${k.toString()}"` + ': ' + handler(val);
+          if (isNaN(k)) {
+            output += '\n' + indentLevel + k + ': ' + handler(val);
+          } else {
+            output += '\n' + indentLevel + `"${k.toString()}"` + ': ' + handler(val);
+          }
         });
         indentLevel = indentLevel.replace(/  /, '');
 
