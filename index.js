@@ -7,6 +7,7 @@
 
   function stringify(data) {
     var handlers, indentLevel = '';
+    const depth = 0
 
     handlers = {
       "undefined": function () {
@@ -66,7 +67,8 @@
 
         return output;
       },
-      "object": function (x) {
+      "object": function (x, depth) {
+        depth++
         var output = '';
 
         if (0 === Object.keys(x).length) {
@@ -74,7 +76,7 @@
           return output;
         }
 
-        indentLevel = indentLevel.replace(/$/, '  ');
+        indentLevel = indentLevel.replace(/$/, depth === 1 ? '' : '  ');
         Object.keys(x).forEach(function (k) {
           var val = x[k],
             handler = handlers[typeOf(val)];
@@ -92,7 +94,7 @@
             throw new Error('what the crap: ' + typeOf(val));
           }
 
-          output += '\n' + indentLevel + k + ': ' + handler(val);
+          output += '\n' + indentLevel + `"${k.toString()}"` + ': ' + handler(val);
         });
         indentLevel = indentLevel.replace(/  /, '');
 
@@ -104,7 +106,12 @@
       }
     };
 
-    return '---' + handlers[typeOf(data)](data) + '\n';
+    const output = '---' + handlers[typeOf(data)](data, depth) + '\n';
+    var lines = output.split('\n');
+    lines.splice(0,1);
+    var newtext = lines.join('\n');
+
+    return newtext
   }
 
   module.exports.stringify = stringify;
